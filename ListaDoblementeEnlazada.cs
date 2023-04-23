@@ -1,6 +1,6 @@
 using System.Collections;
+using TrabajoGrupal;
 
-namespace TrabajoGrupal;
 class ListaDoblementeEnlazada<T> : IDisposable, IEnumerable<T> where T : IComparable<T>
 
 {
@@ -188,5 +188,40 @@ class ListaDoblementeEnlazada<T> : IDisposable, IEnumerable<T> where T : ICompar
             Primero = null;
             It = null;
         }
+    }
+    public void ImprimeLista(){
+        IEnumerator<T> e1 = GetEnumerator();
+        while (e1.MoveNext())
+        {
+            Console.Write($"{e1.Current} "); 
+        }
+    }
+    public void Borra(NodoListaDoblementeEnlazada<T> nodo)
+    {
+        if (Longitud == 1)
+        {     
+            Primero = Ultimo = null;
+        }
+        else if (Primero == nodo)
+        {
+            Primero = nodo.Siguiente;
+            nodo.Siguiente.Anterior = null;
+        }
+        else
+        {
+            NodoListaDoblementeEnlazada<T>? a = null;
+            for (NodoListaDoblementeEnlazada<T>? n = Primero; n != null && n != nodo; n = n.Siguiente) a = n;
+
+            if (a == null)
+                throw new Exception("El nodo a borrar no pertenece a la lista.");
+
+            a.Siguiente = nodo.Siguiente;
+            if (Ultimo == nodo)
+                Ultimo = a;
+        }
+        
+        nodo.Siguiente = nodo.Anterior = null;
+        
+        Longitud--;
     }
 }

@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace TrabajoGrupal;
 class ListaDoblementeEnlazada<T> : IDisposable, IEnumerable<T> where T : IComparable<T>
 
@@ -101,10 +103,6 @@ class ListaDoblementeEnlazada<T> : IDisposable, IEnumerable<T> where T : ICompar
         this.Primero = this.Ultimo = null;
     }
     public void Clear() => Dispose();
-    public void GetEnumerator()
-    {
-
-    }
     public void AñadeAntesDe(
         NodoListaDoblementeEnlazada<T> nodo,
         NodoListaDoblementeEnlazada<T> nuevo)
@@ -166,5 +164,29 @@ class ListaDoblementeEnlazada<T> : IDisposable, IEnumerable<T> where T : ICompar
         nuevo.Anterior = nodo;
         nodo.Siguiente = nuevo;
         this.Longitud++;
+    }
+
+    public IEnumerator<T> GetEnumerator() => new Enumerador(Primero);
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    private class Enumerador : IEnumerator<T>, IDisposable {
+        private NodoListaDoblementeEnlazada<T>? It {get; set;}
+        private NodoListaDoblementeEnlazada<T>? Primero {get; set;}
+        public Enumerador(NodoListaDoblementeEnlazada<T> primero) {
+            Primero = primero;
+            Reset();
+        }
+        public void Reset() => It = null;
+        public T Current => It!.Dato;
+        object IEnumerator.Current => Current;
+        public bool MoveNext() {
+            bool puedoIterar = It == null && Primero != null || It != null && It.Siguiente != null;
+            if (puedoIterar) It = It == null ? Primero : It.Siguiente;
+            return puedoIterar;
+        }
+        public void Dispose() {
+            Primero = null;
+            It = null;
+        }
     }
 }
